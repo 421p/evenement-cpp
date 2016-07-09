@@ -33,7 +33,7 @@ emitter.on("foo-event", [](void* args) {
 ### Emitting Events
 
 ```c++
-$emitter.emit("foo-event");
+emitter.emit("foo-event");
 ```
 
 ### Passing data to the callback
@@ -43,7 +43,7 @@ emitter.on("greetings", [](void* args) {
     std::cout << "Hello "<< (char*)args << std::endl;
 });
 
-$emitter.emit("greetings", "Bob"); // Hello Bob
+emitter.emit("greetings", "Bob"); // Hello Bob
 ```
 
 lambda capture feature can be used here too:
