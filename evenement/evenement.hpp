@@ -4,6 +4,7 @@
 #include <functional>
 #include <algorithm>
 #include <vector>
+#include <memory>
 
 using std::map;
 using std::string;
