@@ -1,6 +1,8 @@
 # Evenement-cpp
+
 Événement-cpp is a port of [igorw/evenement](https://github.com/igorw/evenement), simple event dispatching library for PHP to C++.
 
+[![Build Status](https://travis-ci.org/421p/evenement-cpp.svg?branch=master)](https://travis-ci.org/421p/evenement-cpp)
 ## How to install
 
 It's header-only library so all you need is `#include<evenement.hpp>` to your project.
