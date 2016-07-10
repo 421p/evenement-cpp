@@ -3,8 +3,9 @@
 
 ## How to install
 
-It's header-only library so all you need is `#include<evenement.hpp>` to your project: <br>
-`wget https://github.com/421p/evenement-cpp/blob/master/evenement/evenement.hpp`
+It's header-only library so all you need is `#include<evenement.hpp>` to your project.
+
+You can download it via `wget https://raw.githubusercontent.com/421p/evenement-cpp/master/evenement/evenement.hpp`
 
 ## Usage
 
