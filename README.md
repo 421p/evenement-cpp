@@ -91,7 +91,3 @@ git clone https://github.com/421p/evenement-cpp
 cd evenement-cpp
 g++ example.cxx -std=c++11 -o runme && ./runme  
 ```
-
-### TODO:
-* add some tests
-
