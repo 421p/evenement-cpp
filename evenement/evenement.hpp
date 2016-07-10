@@ -43,10 +43,10 @@ namespace evenement {
 			_listeners[event].push_back(listener);
 		}
 
-		void once(string event, Listener listener)
+		void once(string event, Listener& listener)
 		{
 			Listener onceListener;
-			onceListener.value = [this, event, listener, onceListener](void* args) {
+			onceListener.value = [this, event, listener, &onceListener](void* args) {
 				removeListener(event, onceListener);
 				listener.value(args);
 			};
@@ -56,11 +56,10 @@ namespace evenement {
 
 		void once(string event, function<void(void*)> callable)
 		{
-			Listener listener(callable);
 			Listener onceListener;
-			onceListener.value = [this, event, &listener, &onceListener](void* args) {
+			onceListener.value = [this, event, callable, &onceListener](void* args) {
 				removeListener(event, onceListener);
-				listener.value(args);
+				callable(args);
 			};
 
 			on(event, onceListener);
