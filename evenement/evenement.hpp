@@ -32,7 +32,9 @@ namespace evenement {
 	public:
 		void on(string event, Listener& listener)
 		{
-			listener.key = generateId();
+			if (listener.key == 0) {
+				listener.key = generateId();
+			}
 			_listeners[event].push_back(listener);
 		}
 
@@ -46,8 +48,13 @@ namespace evenement {
 		void once(string event, Listener& listener)
 		{
 			Listener onceListener;
-			onceListener.value = [this, event, listener, &onceListener](void* args) {
-				removeListener(event, onceListener);
+			auto key = generateId();
+
+			onceListener.key = key;
+			onceListener.value = [this, event, listener, key](void* args) {
+				Listener oncer;
+				oncer.key = key;
+				removeListener(event, oncer);
 				listener.value(args);
 			};
 
@@ -57,8 +64,13 @@ namespace evenement {
 		void once(string event, function<void(void*)> callable)
 		{
 			Listener onceListener;
-			onceListener.value = [this, event, callable, &onceListener](void* args) {
-				removeListener(event, onceListener);
+			auto key = generateId();
+
+			onceListener.key = key;
+			onceListener.value = [this, event, callable, key](void* args) {
+				Listener oncer;
+				oncer.key = key;
+				removeListener(event, oncer);
 				callable(args);
 			};
 
@@ -72,13 +84,13 @@ namespace evenement {
 			}
 		}
 
-		void removeListener(string event, Listener callable)
+		void removeListener(string event, Listener& listener)
 		{
 			if (_listeners.count(event) == 1) {
 				auto vector = &_listeners.at(event);
 
-				auto it = find_if(vector->begin(), vector->end(), [&callable](Listener function) {
-				    return callable.key == function.key;
+				auto it = find_if(vector->begin(), vector->end(), [listener](Listener function) {
+				    return listener.key == function.key;
 				});
 
 				if (it != vector->end()) {

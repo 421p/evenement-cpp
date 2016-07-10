@@ -58,8 +58,8 @@ const lest::test specification[] =
 		for (int i = 0; i < 10; i++) {
 			emitter.emit("event");
 
-			EXPECT(lambdaCounter == 1);
 			EXPECT(listenerCounter == 1);
+			EXPECT(lambdaCounter == 1);
 		}
     },
 	
