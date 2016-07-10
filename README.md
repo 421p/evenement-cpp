@@ -31,6 +31,14 @@ emitter.on("foo-event", [](void* args) {
 });
 ```
 
+or if you want it trigger just once:
+
+```c++
+emitter.once("foo-event", [](void* args) {
+    std::cout << "foo-event was fired this time!" << std::endl;
+});
+```
+
 ### Emitting Events
 
 ```c++
@@ -56,6 +64,22 @@ emitter.on("greetings", [foo](void* args) {
     std::cout << foo.c_str() << std::endl;
 });
 
+```
+
+### Removing listeners
+
+if you want to remove listener later you should wrap your function into `evenement::Listener` class
+
+```c++
+Listener someListener([](void* args) { });
+emitter.on("event", someListener);
+emitter.removeListener("event", someListener);
+```
+
+also you can remove all listeners from event:
+
+```c++
+emitter.removeAllListeners("event");
 ```
 
 ### Running a example
