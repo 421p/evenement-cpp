@@ -1,0 +1,6 @@
+language: cpp
+compiler:
+  - gcc
+script:
+  - g++ -Wall -std=c++11 -o testcase test/test.cxx
+  - ./testcase
