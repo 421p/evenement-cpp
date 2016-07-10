@@ -25,23 +25,25 @@ const lest::test specification[] =
     {
 		EventEmitter emitter;
 
-		listener fooCallback = [](void* args) {
-			
-		};
-		listener barBallback = [](void* args) {
-			
-		};
+	    auto fooToggle = false;
+	    auto barToggle = false;
 
+		Listener fooCallback([&fooToggle](void* args) { fooToggle = true; });
+		Listener barCallback([&barToggle](void* args) { barToggle = true; });
+
+		emitter.on("event", barCallback);
 		emitter.on("event", fooCallback);
-		emitter.on("event", barBallback);
 
-		emitter.removeListener("event", barBallback);
+		emitter.removeListener("event", barCallback);
 
-		emitter.emit("event", "hellokitty");
+		emitter.emit("event");
+
+		EXPECT(fooToggle == 1);
+		EXPECT(barToggle == 0);
     },
 };
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
     return lest::run( specification, argc, argv );
 }

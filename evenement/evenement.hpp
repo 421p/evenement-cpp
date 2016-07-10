@@ -4,32 +4,63 @@
 #include <functional>
 #include <algorithm>
 #include <vector>
-#include <memory>
+#include <utility>
 
 using std::map;
 using std::string;
 using std::function;
 using std::vector;
+using std::pair;
 
 namespace evenement {
 
-	typedef function<void(void*)> listener;
+	class Listener {
+	public:
+		Listener() {}
+
+		explicit Listener(function<void(void*)> callable):value(callable) {}
+
+		int key = 0;
+		function<void(void*)> value;
+	};
 
 	class EventEmitter {
+	private:
+		int generatedId = 0;
 	protected:
-		map<string, vector<listener>> _listeners;
+		map<string, vector<Listener>> _listeners;
 	public:
-		void on(string event, listener callable)
+		void on(string event, Listener& listener)
 		{
-			_listeners[event].push_back(callable);
+			listener.key = generateId();
+			_listeners[event].push_back(listener);
 		}
 
-		void once(string event, listener callable)
+		void on(string event, function<void(void*)> callable)
 		{
-			listener onceListener;
-			onceListener = [this, event, callable, onceListener](void* args) {
+			Listener listener(callable);
+			listener.key = generateId();
+			_listeners[event].push_back(listener);
+		}
+
+		void once(string event, Listener listener)
+		{
+			Listener onceListener;
+			onceListener.value = [this, event, listener, onceListener](void* args) {
 				removeListener(event, onceListener);
-				callable(args);
+				listener.value(args);
+			};
+
+			on(event, onceListener);
+		}
+
+		void once(string event, function<void(void*)> callable)
+		{
+			Listener listener(callable);
+			Listener onceListener;
+			onceListener.value = [this, event, &listener, &onceListener](void* args) {
+				removeListener(event, onceListener);
+				listener.value(args);
 			};
 
 			on(event, onceListener);
@@ -38,17 +69,17 @@ namespace evenement {
 		void emit(string event, void* args = nullptr)
 		{
 			for (auto ev : listeners(event)) {
-				ev(args);
+				ev.value(args);
 			}
 		}
 
-		void removeListener(string event, listener callable)
+		void removeListener(string event, Listener callable)
 		{
 			if (_listeners.count(event) == 1) {
 				auto vector = &_listeners.at(event);
 
-				auto it = find_if(vector->begin(), vector->end(), [&callable](listener function) {
-				    return callable.target<void(*)(void*)>() == function.target<void(*)(void*)>();
+				auto it = find_if(vector->begin(), vector->end(), [&callable](Listener function) {
+				    return callable.key == function.key;
 				});
 
 				if (it != vector->end()) {
@@ -69,9 +100,17 @@ namespace evenement {
 			}
 		}
 
-		vector<listener> listeners(string event)
+		vector<Listener> listeners(string event)
 		{
-			return _listeners.count(event) == 1 ? _listeners.at(event) : vector<listener>();
+			return _listeners.count(event) == 1 ? _listeners.at(event) : vector<Listener>();
+		}
+
+	private:
+
+		int generateId()
+		{
+			generatedId++;
+			return generatedId;
 		}
 	};
 }
